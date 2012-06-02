@@ -1,7 +1,7 @@
 var express = require('express'),
 	mongoose = require('mongoose'),
 	_ = require('underscore')._,
-	SENSIS_APIKEY = require('./sensis-apikey.js');
+	config = require('./config.js');
 
 var app = express.createServer();
 
@@ -10,6 +10,6 @@ app.get('/', function(req, res){
 });
 
 var PORT = 3000;
-console.log(SENSIS_APIKEY);
+console.log(config.sensis_apikey);
 console.log('Listening on port ' + PORT + '...');
 app.listen(PORT);
