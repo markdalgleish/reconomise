@@ -3,6 +3,24 @@ reconomise
 
 Crowd sourced local business support network and priority ranking system
 
+Getting Started
+===============
+
+Install Node.js first.
+
+Then install all the dependencies:
+`npm install`
+
+Then add your Sensis API Key:
+- Copy `sensis-apikey.example.js` and rename it to `sensis-apikey.js`
+- Replace the placeholder key with your API key. Ask me if you don't have one :)
+
+Run the server:
+`node server.js`
+
+View the site at http://localhost:3000
+
+
 Example "Business" JSON
 =======================
 
