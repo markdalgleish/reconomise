@@ -17,7 +17,7 @@ var EventSchema = new Schema({
 var Event = mongoose.model("Event", EventSchema);
 
 var BusinessSchema = new Schema({
-	business_id: Number,
+	business_id: String,
 	events: [EventSchema],
 	needs: [{
 		type: String,
@@ -28,7 +28,8 @@ var BusinessSchema = new Schema({
 		type: String,
         comments: String,
         availability: Number
-	}]
+	}],
+	sensis_data: String
 });
 var Business = mongoose.model("Business", BusinessSchema);
 
@@ -47,6 +48,8 @@ app.get('/', function(req, res){
 });
 
 function returnBusinessData(res, businesses) {
+	if (businesses.length === 0) res.send([]);
+	
 	var id_string = ''
 	_.each(businesses, function(business) {
 		id_string += business.business_id + ',';
@@ -65,10 +68,10 @@ function returnBusinessData(res, businesses) {
 			var data = JSON.parse(chunk);
 			
 			_.each(data.results, function(result, i) {
-				MOCK_BUSINESS_DATA[i].sensis_data = result;
+				businesses[i].sensis_data = JSON.stringify(result);
 			});
 			
-			res.send(MOCK_BUSINESS_DATA);
+			res.send(businesses);
 		});
 	});
 }
@@ -87,8 +90,6 @@ app.post('/api/events', function(req, res) {
 	var event = new Event();
 	event.name = req.body.name;
 	
-	console.log(event.name);
-	
 	event.save(function(err) {
 		if (err) {
 			console.log('Error saving event');
@@ -106,22 +107,75 @@ app.get('/api/events/:id', function(req, res) {
 	});
 });
 
+app.del('/api/events/:id', function(req, res) {
+	Event.find({_id: req.params.id }).remove(function(err) {
+		if (err) {
+			console.log('Error deleting event');
+			res.send('error');
+		} else {
+			console.log('Successfully deleted event');
+			res.send('success');
+		}
+	});
+});
+
+// TODO: Allow event updates
 app.put('/api/events/:id', function(req, res) {
 	console.log(req);
 });
 
 app.post('/api/events/:event_id/businesses', function(req, res) {
-	console.log(req);
+	var business = new Business();
+	
+	Event.find({_id: req.params.event_id }, function(err, docs) {
+		if (err) {
+			res.send('error');
+			return;
+		}
+		
+		business.events.push(docs[0]);
+		
+		business.business_id = req.body.business_id;
+		business.needs = req.body.needs || [];
+		business.offers = req.body.offers || [];
+		
+		business.save(function(err) {
+			if (err) {
+				console.log('Error saving business');
+				res.send('error');
+			} else {
+				console.log('Successfully saved business');
+				res.send('success');
+			}
+		});
+	});
 });
 
 app.get('/api/events/:event_id/businesses', function(req, res) {
-	console.log(req);
+	Business.find({'events._id': req.params.event_id}, function(err, docs) {
+		returnBusinessData(res, docs);
+	});
 });
 
 app.get('/api/events/:event_id/businesses/:business_id', function(req, res) {
-	console.log(req);
+	Business.find({'events._id': req.params.event_id, business_id: req.params.business_id }, function(err, docs) {
+		returnBusinessData(res, docs);
+	});
 });
 
+app.del('/api/events/:event_id/businesses/:business_id', function(req, res) {
+	Business.find({'events._id': req.params.event_id, business_id: req.params.business_id }).remove(function(err) {
+		if (err) {
+			console.log('Error deleting business');
+			res.send('error');
+		} else {
+			console.log('Successfully deleted business');
+			res.send('success');
+		}
+	});
+});
+
+// TODO: Update a business
 app.put('/api/events/:event_id/businesses/:business_id', function(req, res) {
 	console.log(req);
 });
