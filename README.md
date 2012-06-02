@@ -6,7 +6,14 @@ Crowd sourced local business support network and priority ranking system
 Getting Started
 ===============
 
-Install Node.js first.
+Install Node.js.
+
+
+Then install MongoDB.
+
+
+Then start the MongoDB server with the following command:
+`mongod`
 
 
 Then install all the dependencies:

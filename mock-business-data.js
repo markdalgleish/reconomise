@@ -1,5 +1,6 @@
 module.exports = [{
     "business_id": 12193709,
+	"events": [123],
     "needs": [
 		{
 			"type": "Generators",
