@@ -47,10 +47,12 @@ app.configure(function(){
 	app.use(app.router);
 	app.use(express.static(__dirname + '/public'));
 	app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
+	app.set('view engine', 'jade');
+	app.set('view options', { layout: false });
 });
 
 app.get('/', function(req, res){
-    res.send('Hello World');
+    res.render('index');
 });
 
 function returnBusinessData(res, businesses) {
