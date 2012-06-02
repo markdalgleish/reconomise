@@ -20,6 +20,12 @@ function initialize() {
 	      map: map,
 	      title: business.sensis_data.name
 	  });
+
+        // TODO. What should we do?
+        google.maps.event.addListener(marker, 'click', function() {
+            window.location = business.sensis_data.detailsLink;
+        });
+
 	}	
 }
 
@@ -146,3 +152,4 @@ function get_businesses() {
 	return businesses;
 }
 google.maps.event.addDomListener(window, 'load', initialize);
+
