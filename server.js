@@ -16,19 +16,25 @@ var EventSchema = new Schema({
 });
 var Event = mongoose.model("Event", EventSchema);
 
+var NeedSchema = new Schema({
+	type: String,
+    comments: String,
+    urgency: Number
+});
+var Need = mongoose.model("Need", NeedSchema);
+
+var OfferSchema = new Schema({
+	type: String,
+    comments: String,
+    availability: Number
+});
+var Offer = mongoose.model("Offer", OfferSchema);
+
 var BusinessSchema = new Schema({
 	business_id: String,
 	events: [EventSchema],
-	needs: [{
-		type: String,
-        comments: String,
-        urgency: Number
-	}],
-	offers: [{
-		type: String,
-        comments: String,
-        availability: Number
-	}],
+	needs: [NeedSchema],
+	offers: [OfferSchema],
 	sensis_data: String
 });
 var Business = mongoose.model("Business", BusinessSchema);
@@ -119,9 +125,25 @@ app.del('/api/events/:id', function(req, res) {
 	});
 });
 
-// TODO: Allow event updates
 app.put('/api/events/:id', function(req, res) {
-	console.log(req);
+	Event.find({_id: req.params.id }, function(err, docs) {
+		if (err) {
+			res.send('error');
+			return;
+		}
+		
+		_.extend(docs[0], req.body);
+		
+		docs[0].save(function(err) {
+			if (err) {
+				console.log(err);
+				res.send('error');
+			} else {
+				console.log('Successfully updated event');
+				res.send('success');
+			}
+		});
+	});
 });
 
 app.post('/api/events/:event_id/businesses', function(req, res) {
@@ -175,9 +197,43 @@ app.del('/api/events/:event_id/businesses/:business_id', function(req, res) {
 	});
 });
 
-// TODO: Update a business
 app.put('/api/events/:event_id/businesses/:business_id', function(req, res) {
-	console.log(req);
+	Business.find({'events._id': req.params.event_id, business_id: req.params.business_id }, function(err, docs) {
+		if (err) {
+			res.send('error');
+			return;
+		}
+		
+		if (req.body.needs) {
+			_.each(docs[0].needs, function(need) {
+				need.remove();
+			});
+			
+			_.each(req.body.needs, function(need) {
+				docs[0].needs.push(need);
+			});
+		}
+		
+		if (req.body.offers) {
+			_.each(docs[0].offers, function(offer) {
+				offer.remove();
+			});
+			
+			_.each(req.body.offers, function(offer) {
+				docs[0].offers.push(offer);
+			});
+		}
+		
+		docs[0].save(function(err) {
+			if (err) {
+				console.log(err);
+				res.send('error');
+			} else {
+				console.log('Successfully updated event');
+				res.send('success');
+			}
+		});
+	});
 });
 
 var PORT = 3000;
