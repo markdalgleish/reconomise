@@ -1,9 +1,53 @@
 body {
+  font-family: Century Gothic, sans-serif;
+  font-size: 16px;	
+}
+.main {
   margin: 0;
   padding: 10px 20px 20px;
-  font-family: Arial;
-  font-size: 16px;
+  width: 800px;
 }
+
+.header {
+	text-align: right;
+	border-bottom: 3px solid #D7F0D7;
+	height: 50px;
+	margin-bottom: 20px;
+}
+
+.action a, a.visited, a.hover {
+	text-decoration: none;
+	color: #D7F0D7;
+	background-color: #7ACC7A;
+	display: block;
+	width: 200px;
+	height: 50px;
+	float: right;
+	margin-left: 20px;
+	padding: 5px;
+	font-size: 30px;
+}
+
+.needs{
+	margin-top:20px;
+	margin-bottom: 40px;
+}
+
+.needs_list {
+	border: 1px solid #7ACC7A;
+	margin-right: 20px;
+	min-height: 200px;
+	width: 385px;
+	float: left;
+}
+
+.needs_details {
+	border: 1px solid #7ACC7A;
+	width: 385px;
+	min-height: 200px;
+	float:left;
+}
+
 
 #map-container {
   padding: 6px;
@@ -13,10 +57,10 @@ body {
   -webkit-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
   -moz-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
   box-shadow: rgba(64, 64, 64, 0.1) 0 2px 5px;
-  width: 600px;
+  width: 780px;
 }
 
 #map {
-  width: 600px;
+  width: 780px;
   height: 400px;
 }
