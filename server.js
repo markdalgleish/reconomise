@@ -2,8 +2,7 @@ var http = require('http'),
 	express = require('express'),
 	mongoose = require('mongoose'),
 	_ = require('underscore')._,
-	config = require('./server-config.js'),
-	MOCK_BUSINESS_DATA = require('./mock-business-data.js');
+	config = require('./server-config.js');
 
 mongoose.connect(config.mongodb_url);
 
@@ -83,10 +82,6 @@ function returnBusinessData(res, businesses) {
 		});
 	});
 }
-
-app.get('/api/test', function(req, res) {
-	returnBusinessData(res, MOCK_BUSINESS_DATA);
-});
 
 app.get('/api/events', function(req, res) {
 	Event.find({}, function(err, docs) {
