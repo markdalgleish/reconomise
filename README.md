@@ -8,15 +8,22 @@ Getting Started
 
 Install Node.js first.
 
+
 Then install all the dependencies:
+
 `npm install`
 
+
 Then add your Sensis API Key:
-- Copy `sensis-apikey.example.js` and rename it to `sensis-apikey.js`
+- Copy `server-config-example.js` and rename it to `server-config.js`
 - Replace the placeholder key with your API key. Ask me if you don't have one :)
+- Add the MongoDB username and password. Again, ask me if you need it :)
+
 
 Run the server:
+
 `node server.js`
+
 
 View the site at http://localhost:3000
 
