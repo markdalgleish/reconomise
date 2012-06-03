@@ -1,105 +1,26 @@
 reconomise
 ==========
 
-Crowd sourced local business support network and priority ranking system
+Crowd sourced local business support network and priority ranking system.
+
+Reconomise aims to help recover local economies hit by disaster by encouraging small businesses to pool their resources.
 
 Getting Started
-===============
+---------------
 
-Install Node.js.
+Install [Node.js](http://nodejs.org/).
 
+Install [MongoDB](http://www.mongodb.org/).
 
-Install MongoDB.
+Start the MongoDB server: `mongod`
 
-
-Start the MongoDB server with the following command:
-`mongod`
-
-
-Install all the dependencies:
-
-`npm install`
-
+Install all the dependencies: `npm install`
 
 Update the server config:
 - Copy `server-config-example.js` and rename it to `server-config.js`
 - Replace the Sensis placeholder API key with your own API key. Ask me if you don't have one :)
 - Modify the MongoDB connection string if the default is incorrect.
 
+Run the server: `node server.js`
 
-Run the server:
-
-`node server.js`
-
-
-View the site at http://localhost:3000
-
-
-Example "Business" JSON
-=======================
-
-```
-{
-    "business_id": 12193709,
-    "sensis_data": {
-        "name": "Compliance & Risk Services Pty Ltd",
-        "id": "12193709",
-        "categories": [
-            {
-                "name": "Risk Management Consultants",
-                "id": "43672",
-                "sensitive": false
-            }
-        ],
-        "primaryAddress": {
-            "state": "VIC",
-            "type": "PHYSICAL",
-            "suburb": "Melbourne",
-            "postcode": "3000",
-            "latitude": "-37.8146",
-            "longitude": "144.97131",
-            "addressLine": "Lvl 9/ 63 Exhibition St",
-            "geoCodeGranularity": "PROPERTY"
-        },
-        "primaryContacts": [
-            {
-                "value": "(03) 9663 5644",
-                "type": "PHONE"
-            },
-            {
-                "value": "http://www.compliancerisk.com.au",
-                "type": "URL"
-            }
-        ],
-        "reportingId": "eyJzb3VyY2UiOiJZRUxMT1ciLCJwcm9kdWN0SWQiOiI0ODE5MDY1ODkiLCJwcm9kdWN0VmVyc2lvbiI6IjEifQ",
-        "detailsLink": "http://www.yellowpages.com.au/vic/melbourne/compliance-risk-services-pty-ltd-12193709-listing.html?referredBy=TAPI-usSp5M4X22Qs46DYnjMUTPIUGQiu-TEK",
-        "listingType": "Business",
-        "pureMobileBusiness": false,
-        "hasExposureProducts": false
-    },
-    "needs": [
-		{
-			"type": "Generators",
-            "comments": "I need a generator to keep my food from spoiling",
-            "urgency": 6
-        },
-        {
-            "type": "Petrol",
-			"comments": "I need petrol for the generator, if possible",
-            "urgency": 6
-        }
-    ],
-    "offers": [
-        {
-			"type": "Labour",
-            "comments": "I have 20 staff who can help with disaster recovery",
-            "availability": "Business hours"
-        },
-        {
-			"type": "Outdoor Space",
-            "comments": "I have a large car park which can be used for temporary storage",
-            "availability": "As long as this disaster lasts"
-        }
-    ]
-}
-```
+Reconomise should now be available at [http://localhost:3000](http://localhost:3000)
