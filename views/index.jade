@@ -3,23 +3,55 @@ html(lang="en")
 	head
 		meta(http-equiv="content-type", content="text/html; charset=utf-8")
 		title Reconomise
+		link(href='http://fonts.googleapis.com/css?family=Nunito', rel='stylesheet', type='text/css')
 		link(type="text/css", rel="stylesheet", href="map.css")
 		script(src="http://maps.google.com/maps/api/js?sensor=false")
+		script(src="libs/jquery.js")
+		script(src="libs/underscore.js")
+		script(src="libs/handlebars.js")
 		script(src="map.js")
 
 	body
 		div.main
 			h3 Reconomise
+			#sensis Powered by
+				img(src="images/sensis_logo.png")
 			
 			div.header
 				span.action
-					a(href="needs.html") Needs
+					a#need-button(href="javascript:void(0)") + Need
 				span.action
-					a(href="offers.html") Offers
+					a#offer-button(href="javascript:void(0)") + Offer
 					
 			div#map-container
 				div#map
 				
 			div.needs
-				div.needs_list Handlebars goes here!
-				div.needs_details more handlebars goes here!
+				div.needs_list#needs-list Handlebars goes here!
+				div.needs_details#needs-details more handlebars goes here!
+
+		#form-backdrop
+
+		#need-form
+			fieldset
+				label 
+					span Postcode
+					input#need-postcode(type="text")
+				
+				label 
+					span Business Name
+					input#need-business-name(type="text")
+				
+				label 
+					span Need
+					input#need-type(type="text")
+				
+				label 
+					span Hours needed within:
+					input#need-urgency(type="number")
+				
+				label 
+					span Comments
+					textarea#need-comments(type="text")
+				
+				button.submit Add Need

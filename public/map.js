@@ -1,155 +1,169 @@
-function initialize() {
-	var myOptions = {
-    	zoom: 4,
-    	center: new google.maps.LatLng(-25.363882,131.044922),
-    	mapTypeId: google.maps.MapTypeId.ROADMAP
-  	}
-    var map = new google.maps.Map(document.getElementById("map"), myOptions);
-  
-	var businesses = get_businesses();
-	var index;
+$(function() {
+	$.when(
+		$.get('/templates/list.handlebars.html'),
+		$.get('/templates/details.handlebars.html'))
+	.then(function(listTemplateSource, detailsTemplateSource) {
+		
+		var list_template = Handlebars.compile(listTemplateSource[0]),
+			details_template = Handlebars.compile(detailsTemplateSource[0]);
+		
+		var eventId = '4fc9e10a8d2d8923f2000003';
+		
+		var businesses = {};
+		var needs = [];
+		var offers = [];
+		
+		var markers = [];
+		
+			
+		function initialize() {
+			var myOptions = {
+		    	zoom: 4,
+		    	center: new google.maps.LatLng(-25.363882,131.044922),
+		    	mapTypeId: google.maps.MapTypeId.ROADMAP
+		  	}
+		    var map = new google.maps.Map(document.getElementById("map"), myOptions);
+
+			loadAndRenderBusinessData(map, eventId);
+			
+			clearForms();
+		}
+
+		function loadAndRenderBusinessData(map, eventId) {
+			_.each(markers, function(marker) {
+				marker.setMap(null);
+			});
+			
+			markers = [];
+			
+			$.getJSON('/api/events/' + eventId + '/businesses', function(data) {
+				businesses = {};
+				
+				needs = [];
+				offers = [];
+				
+				_.each(data, function(business) {
+					
+					businesses[business.business_id] = business;
+					
+					_.each(business.needs, function(need) {
+						need.business = business;
+						needs.push(need);
+					});
+					
+					_.each(business.offers, function(offer) {
+						offer.business = business;
+						offers.push(offer);
+					});
+					
+					business.sensis_data = JSON.parse(business.sensis_data);
+
+					var business_location = new google.maps.LatLng(
+						business.sensis_data.primaryAddress.latitude,
+						business.sensis_data.primaryAddress.longitude);
+
+					var marker = new google.maps.Marker({
+				      position: business_location,
+				      map: map,
+				      title: business.sensis_data.name
+				  });
+
+			        google.maps.event.addListener(marker, 'click', function() {
+						showDetailedBusinessData(business.business_id);
+			        });
+			
+					markers.push(marker);
+				});
+				
+				showNeedsList(needs);
+			});
+		}
+		
+		function showNeedsList(needs) {
+			$('#needs-list').empty().append(list_template({needs: needs}));
+		}
+		
+		function showDetailedBusinessData(business_id) {
+			console.log(businesses);
+			$('#needs-details').empty().append(details_template(businesses[business_id]));
+		}
+		
+		function clearForms() {
+			$('#need-form').find('input,textarea').val('');
+		}
+		
+		function hideForms() {
+			$('#form-backdrop').fadeOut();
+			$('#need-form').fadeOut();
+		}
+		
+		$('#needs-list').on('click', 'li', function() {
+			showDetailedBusinessData($(this).data('business-id'));
+		});
+		
+		$('#need-button').on('click', function() {
+			$('#form-backdrop').fadeIn();
+			$('#need-form').fadeIn();
+		});
+		
+		$('#form-backdrop').on('click', function() {
+			hideForms();
+		});
+		
+		$('#need-form').on('click', 'button.submit', function() {
+			
+			var postcode = $('#need-postcode').val(),
+				businessName = $('#need-business-name').val();
+			
+			$.get('/api/sensis/' + postcode + '/' + businessName, function(res) {
+				
+				var business_id = res.results[0].id;
+				
+				var data = {};
+
+				data.business_id = business_id;
+				data.needs = [{
+					type: $('#need-type').val(),
+					urgency: $('#need-urgency').val(),
+					comments: $('#need-comments').val()
+				}];
+
+				$.get('/api/events/' + eventId + '/businesses/' + data.business_id, function(res) {
+					if (res.length === 0) {
+						$.ajax({
+							type: 'POST',
+							url: '/api/events/' + eventId + '/businesses',
+							data: data
+						}).success(function(res) {
+							hideForms();
+							initialize();
+						}).fail(function(err) {
+							alert(err);
+						});
+					} else {
+						$.ajax({
+							type: 'PUT',
+							url: '/api/events/' + eventId + '/businesses/' + data.business_id,
+							data: data
+						}).success(function(res) {
+							hideForms();
+							initialize();
+						}).fail(function(err) {
+							alert(err);
+						});
+					}
+				});
+				
+			});
+			
+		});
+
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+	});
 	
-	for (index in businesses) {	
-		var business = businesses[index];
-		var business_location = new google.maps.LatLng(
-			business.sensis_data.primaryAddress.latitude,
-			business.sensis_data.primaryAddress.longitude);
-  	
-		var marker = new google.maps.Marker({
-	      position: business_location,
-	      map: map,
-	      title: business.sensis_data.name
-	  });
+	
+	
+});
 
-        // TODO. What should we do?
-        google.maps.event.addListener(marker, 'click', function() {
-            window.location = business.sensis_data.detailsLink;
-        });
-
-	}	
-}
-
-function get_businesses() {
-
-	  var businesses = [{
-	    business_id: 12193709,
-	    sensis_data: {
-	        "name": "Compliance & Risk Services Pty Ltd",
-	        "id": "12193709",
-	        "categories": [
-	            {
-	                "name": "Risk Management Consultants",
-	                "id": "43672",
-	                "sensitive": false
-	            }
-	        ],
-	        "primaryAddress": {
-	            "state": "VIC",
-	            "type": "PHYSICAL",
-	            "suburb": "Melbourne",
-	            "postcode": "3000",
-	            "latitude": "-37.8146",
-	            "longitude": "144.97131",
-	            "addressLine": "Lvl 9/ 63 Exhibition St",
-	            "geoCodeGranularity": "PROPERTY"
-	        },
-	        "primaryContacts": [
-	            {
-	                "value": "(03) 9663 5644",
-	                "type": "PHONE"
-	            },
-	            {
-	                "value": "http://www.compliancerisk.com.au",
-	                "type": "URL"
-	            }
-	        ],
-	        "reportingId": "eyJzb3VyY2UiOiJZRUxMT1ciLCJwcm9kdWN0SWQiOiI0ODE5MDY1ODkiLCJwcm9kdWN0VmVyc2lvbiI6IjEifQ",
-	        "detailsLink": "http://www.yellowpages.com.au/vic/melbourne/compliance-risk-services-pty-ltd-12193709-listing.html?referredBy=TAPI-usSp5M4X22Qs46DYnjMUTPIUGQiu-TEK",
-	        "listingType": "Business",
-	        "pureMobileBusiness": false,
-	        "hasExposureProducts": false
-	    },
-	    "needs": {
-	        456: { // ID of need
-	            "comments": "I need a generator to keep my food from spoiling",
-	            "urgency": 6
-	        },
-	        457: {
-	            "comments": "I need petrol for the generator, if possible",
-	            "urgency": 6
-	        }
-	    },
-	    "offers": {
-	        567: {
-	            "comments": "I have 20 staff who can help with disaster recovery",
-	            "availability": "Business hours"
-	        },
-	        568: {
-	            "comments": "I have a large car park which can be used for temporary storage",
-	            "availability": "As long as this disaster lasts"
-	        }
-	    }
-	}, 
-	{
-	    business_id: 12193709,
-	    sensis_data: {
-	        "name": "Bobs tractors",
-	        "id": "12193709",
-	        "categories": [
-	            {
-	                "name": "Risk Management Consultants",
-	                "id": "43672",
-	                "sensitive": false
-	            }
-	        ],
-	        "primaryAddress": {
-	            "state": "VIC",
-	            "type": "PHYSICAL",
-	            "suburb": "Melbourne",
-	            "postcode": "3000",
-	            "latitude": "-37.4146",
-	            "longitude": "144.17131",
-	            "addressLine": "Lvl 9/ 63 Exhibition St",
-	            "geoCodeGranularity": "PROPERTY"
-	        },
-	        "primaryContacts": [
-	            {
-	                "value": "(03) 9663 5644",
-	                "type": "PHONE"
-	            },
-	            {
-	                "value": "http://www.compliancerisk.com.au",
-	                "type": "URL"
-	            }
-	        ],
-	        "reportingId": "eyJzb3VyY2UiOiJZRUxMT1ciLCJwcm9kdWN0SWQiOiI0ODE5MDY1ODkiLCJwcm9kdWN0VmVyc2lvbiI6IjEifQ",
-	        "detailsLink": "http://www.yellowpages.com.au/vic/melbourne/compliance-risk-services-pty-ltd-12193709-listing.html?referredBy=TAPI-usSp5M4X22Qs46DYnjMUTPIUGQiu-TEK",
-	        "listingType": "Business",
-	        "pureMobileBusiness": false,
-	        "hasExposureProducts": false
-	    },
-	    "needs": {
-	        456: { // ID of need
-	            "comments": "I need a generator to keep my food from spoiling",
-	            "urgency": 6
-	        },
-	        457: {
-	            "comments": "I need petrol for the generator, if possible",
-	            "urgency": 6
-	        }
-	    },
-	    "offers": {
-	        567: {
-	            "comments": "I have 20 staff who can help with disaster recovery",
-	            "availability": "Business hours"
-	        },
-	        568: {
-	            "comments": "I have a large car park which can be used for temporary storage",
-	            "availability": "As long as this disaster lasts"
-	        }
-	    }
-	}]	
-	return businesses;
-}
-google.maps.event.addDomListener(window, 'load', initialize);
 

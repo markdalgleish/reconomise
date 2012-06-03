@@ -59,7 +59,7 @@ function returnBusinessData(res, businesses) {
 	
 	var id_string = ''
 	_.each(businesses, function(business) {
-		id_string += business.business_id + ',';
+		if (business.business_id) id_string += business.business_id + ',';
 	});
 	id_string = id_string.substr(id_string, id_string.length - 1);
 	
@@ -70,9 +70,14 @@ function returnBusinessData(res, businesses) {
 	};
 	
 	http.get(options, function(sensis_response) {
+		var dataStr = '';
+		
 		sensis_response.setEncoding('utf8');
 		sensis_response.on('data', function (chunk) {
-			var data = JSON.parse(chunk);
+			dataStr += chunk;
+		});
+		sensis_response.on('end', function () {
+			var data = JSON.parse(dataStr);
 			
 			_.each(data.results, function(result, i) {
 				businesses[i].sensis_data = JSON.stringify(result);
@@ -202,9 +207,9 @@ app.put('/api/events/:event_id/businesses/:business_id', function(req, res) {
 		}
 		
 		if (req.body.needs) {
-			_.each(docs[0].needs, function(need) {
-				need.remove();
-			});
+			// _.each(docs[0].needs, function(need) {
+			// 	need.remove();
+			// });
 			
 			_.each(req.body.needs, function(need) {
 				docs[0].needs.push(need);
@@ -212,9 +217,9 @@ app.put('/api/events/:event_id/businesses/:business_id', function(req, res) {
 		}
 		
 		if (req.body.offers) {
-			_.each(docs[0].offers, function(offer) {
-				offer.remove();
-			});
+			// _.each(docs[0].offers, function(offer) {
+			//	offer.remove();
+			// });
 			
 			_.each(req.body.offers, function(offer) {
 				docs[0].offers.push(offer);
@@ -229,6 +234,23 @@ app.put('/api/events/:event_id/businesses/:business_id', function(req, res) {
 				console.log('Successfully updated event');
 				res.send('success');
 			}
+		});
+	});
+});
+
+app.get('/api/sensis/:postcode/:business_name', function(req, res) {
+	var options = {
+		host: 'api.sensis.com.au',
+		port: 80,
+		path: '/ob-20110511/test/search?key=' + config.sensis_apikey + '&query=' + req.params.business_name + '&postcode=' + req.params.postcode
+	};
+	
+	http.get(options, function(sensis_response) {
+		sensis_response.setEncoding('utf8');
+		sensis_response.on('data', function (chunk) {
+			var data = JSON.parse(chunk);
+			
+			res.send(data);
 		});
 	});
 });
