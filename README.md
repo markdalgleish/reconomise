@@ -9,19 +9,19 @@ Getting Started
 Install Node.js.
 
 
-Then install MongoDB.
+Install MongoDB.
 
 
-Then start the MongoDB server with the following command:
+Start the MongoDB server with the following command:
 `mongod`
 
 
-Then install all the dependencies:
+Install all the dependencies:
 
 `npm install`
 
 
-Then add your Sensis API Key:
+Update the server config:
 - Copy `server-config-example.js` and rename it to `server-config.js`
 - Replace the Sensis placeholder API key with your own API key. Ask me if you don't have one :)
 - Modify the MongoDB connection string if the default is incorrect.

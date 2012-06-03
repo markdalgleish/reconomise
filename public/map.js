@@ -102,6 +102,8 @@ $(function() {
 		}
 		
 		$('#needs-list,#offers-list').on('click', 'li', function() {
+			$('#needs-list,#offers-list').find('li').removeClass('active');
+			$(this).addClass('active');
 			showDetailedBusinessData($(this).data('business-id'));
 		});
 		

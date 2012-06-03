@@ -1,8 +1,14 @@
 <h2>{{sensis_data.name}}</h2>
+
+<h3>Address</h3>
 {{sensis_data.primaryAddress.addressLine}}<br />
 {{sensis_data.primaryAddress.suburb}}<br />
-{{sensis_data.primaryAddress.state}}, {{sensis_data.primaryAddress.postcode}}<br />
-<br />
+{{sensis_data.primaryAddress.state}}, {{sensis_data.primaryAddress.postcode}}
+
+<h3>Contact</h3>
+{{#each sensis_data.primaryContacts}}
+  <b>{{type}}:</b> {{value}}<br />
+{{/each}}
 
 {{#if needs}}
   <h3>Needs</h3>
