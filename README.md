@@ -23,8 +23,8 @@ Then install all the dependencies:
 
 Then add your Sensis API Key:
 - Copy `server-config-example.js` and rename it to `server-config.js`
-- Replace the placeholder key with your API key. Ask me if you don't have one :)
-- Add the MongoDB username and password. Again, ask me if you need it :)
+- Replace the Sensis placeholder API key with your own API key. Ask me if you don't have one :)
+- Modify the MongoDB connection string if the default is incorrect.
 
 
 Run the server:
