@@ -1,4 +1,31 @@
-{{sensis_data.name}}<br /><br />
+<h2>{{sensis_data.name}}</h2>
 {{sensis_data.primaryAddress.addressLine}}<br />
 {{sensis_data.primaryAddress.suburb}}<br />
 {{sensis_data.primaryAddress.state}}, {{sensis_data.primaryAddress.postcode}}<br />
+<br />
+
+{{#if needs}}
+  <h3>Needs</h3>
+  <ul>
+    {{#each needs}}
+      <li>
+        <h4>{{type}}</h4>
+        {{comments}}<br />
+        <em>({{urgency}} hours remaining)</em>
+      </li>
+    {{/each}}
+  </ul>
+{{/if}}
+
+{{#if offers}}
+  <h3>Offers</h3>
+  <ul>
+    {{#each offers}}
+      <li>
+        <h4>{{type}}</h4>
+        {{comments}}<br />
+        <em>(available for another {{availability}} hours)</em>
+      </li>
+    {{/each}}
+  </ul>
+{{/if}}

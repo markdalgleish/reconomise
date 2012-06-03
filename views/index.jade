@@ -13,7 +13,7 @@ html(lang="en")
 
 	body
 		div.main
-			h3 Reconomise
+			h1 Reconomise
 			#sensis Powered by
 				img(src="images/sensis_logo.png")
 			
@@ -27,23 +27,24 @@ html(lang="en")
 				div#map
 				
 			div.needs
-				div.needs_list#needs-list Handlebars goes here!
-				div.needs_details#needs-details more handlebars goes here!
+				div.needs_list#needs-list
+				div.offers_list#offers-list
+				div.needs_details#needs-details
 
 		#form-backdrop
 
-		#need-form
+		.form#need-form
 			fieldset
 				label 
-					span Postcode
+					span Postcode:
 					input#need-postcode(type="text")
 				
 				label 
-					span Business Name
+					span Business Name:
 					input#need-business-name(type="text")
 				
 				label 
-					span Need
+					span We Need:
 					input#need-type(type="text")
 				
 				label 
@@ -51,7 +52,31 @@ html(lang="en")
 					input#need-urgency(type="number")
 				
 				label 
-					span Comments
+					span Comments:
 					textarea#need-comments(type="text")
 				
 				button.submit Add Need
+		
+		.form#offer-form
+			fieldset
+				label 
+					span Postcode:
+					input#offer-postcode(type="text")
+
+				label 
+					span Business Name:
+					input#offer-business-name(type="text")
+
+				label 
+					span We Can Offer:
+					input#offer-type(type="text")
+
+				label 
+					span Hours Available For:
+					input#offer-availability(type="number")
+
+				label 
+					span Comments:
+					textarea#offer-comments(type="text")
+
+				button.submit Add Offer

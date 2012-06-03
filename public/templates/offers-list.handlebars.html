@@ -1,11 +1,11 @@
-{{#if needs}}
-  <h3>Needs</h3>
+{{#if offers}}
+  <h3>Offers</h3>
   <ul>
-      {{#each needs}}
+      {{#each offers}}
           <li data-business-id="{{business.business_id}}">
               <h4>{{type}}</h4>
               {{comments}}<br />
-              <em>({{urgency}} hours remaining)</em>
+              <em>(available for another {{availability}} hours)</em>
           </li>
       {{/each}}
   </ul>

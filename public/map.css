@@ -10,7 +10,7 @@ body {
   font-size: 16px;	
 }
 
-h3 {
+h1 {
   padding-left: 14px;
   text-shadow: 1px 1px 0px #297E29;
   color: #71CA71;
@@ -88,13 +88,21 @@ h3 {
 	padding-left: 20px;
 	border-right: 0;
 	min-height: 200px;
-	width: 50%;
+	width: 33.33333%;
+	float: left;
+}
+
+.offers_list {
+	padding-left: 20px;
+	border-right: 0;
+	min-height: 200px;
+	width: 33.33333%;
 	float: left;
 }
 
 .needs_details {
 	padding-left: 20px;
-	width: 50%;
+	width: 33.33333%;
 	min-height: 200px;
 	float:left;
 }
@@ -159,7 +167,7 @@ fieldset button.submit {
   background-color: rgba(0,0,0,0.5);
 }
 
-#need-form {
+.form {
   display: none;
   background: #4CA34C;
   color: white;
@@ -174,4 +182,8 @@ fieldset button.submit {
   box-shadow: 0 0 50px rgba(0,0,0,0.5);
   border-radius: 10px;
   padding: 30px;
+}
+
+#need-form {
+  
 }

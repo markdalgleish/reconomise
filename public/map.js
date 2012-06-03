@@ -1,10 +1,12 @@
 $(function() {
 	$.when(
 		$.get('/templates/list.handlebars.html'),
+		$.get('/templates/offers-list.handlebars.html'),
 		$.get('/templates/details.handlebars.html'))
-	.then(function(listTemplateSource, detailsTemplateSource) {
+	.then(function(listTemplateSource, offersListTemplateSource, detailsTemplateSource) {
 		
 		var list_template = Handlebars.compile(listTemplateSource[0]),
+			offers_list_template = Handlebars.compile(offersListTemplateSource[0]),
 			details_template = Handlebars.compile(detailsTemplateSource[0]);
 		
 		var eventId = '4fc9e10a8d2d8923f2000003';
@@ -23,7 +25,8 @@ $(function() {
 		    	mapTypeId: google.maps.MapTypeId.ROADMAP
 		  	}
 		    var map = new google.maps.Map(document.getElementById("map"), myOptions);
-
+			
+			$('#needs-details').empty();
 			loadAndRenderBusinessData(map, eventId);
 			
 			clearForms();
@@ -75,16 +78,16 @@ $(function() {
 					markers.push(marker);
 				});
 				
-				showNeedsList(needs);
+				showNeedsList(needs, offers);
 			});
 		}
 		
-		function showNeedsList(needs) {
+		function showNeedsList(needs, offers) {
 			$('#needs-list').empty().append(list_template({needs: needs}));
+			$('#offers-list').empty().append(offers_list_template({offers: offers}));
 		}
 		
 		function showDetailedBusinessData(business_id) {
-			console.log(businesses);
 			$('#needs-details').empty().append(details_template(businesses[business_id]));
 		}
 		
@@ -95,10 +98,16 @@ $(function() {
 		function hideForms() {
 			$('#form-backdrop').fadeOut();
 			$('#need-form').fadeOut();
+			$('#offer-form').fadeOut();
 		}
 		
-		$('#needs-list').on('click', 'li', function() {
+		$('#needs-list,#offers-list').on('click', 'li', function() {
 			showDetailedBusinessData($(this).data('business-id'));
+		});
+		
+		$('#offer-button').on('click', function() {
+			$('#form-backdrop').fadeIn();
+			$('#offer-form').fadeIn();
 		});
 		
 		$('#need-button').on('click', function() {
@@ -109,6 +118,55 @@ $(function() {
 		$('#form-backdrop').on('click', function() {
 			hideForms();
 		});
+		
+		$('#offer-form').on('click', 'button.submit', function() {
+			
+			var postcode = $('#offer-postcode').val(),
+				businessName = $('#offer-business-name').val();
+			
+			$.get('/api/sensis/' + postcode + '/' + businessName, function(res) {
+				
+				var business_id = res.results[0].id;
+				
+				var data = {};
+
+				data.business_id = business_id;
+				data.offers = [{
+					type: $('#offer-type').val(),
+					availability: $('#offer-availability').val(),
+					comments: $('#offer-comments').val()
+				}];
+
+				$.get('/api/events/' + eventId + '/businesses/' + data.business_id, function(res) {
+					if (res.length === 0) {
+						$.ajax({
+							type: 'POST',
+							url: '/api/events/' + eventId + '/businesses',
+							data: data
+						}).success(function(res) {
+							hideForms();
+							initialize();
+						}).fail(function(err) {
+							alert(err);
+						});
+					} else {
+						$.ajax({
+							type: 'PUT',
+							url: '/api/events/' + eventId + '/businesses/' + data.business_id,
+							data: data
+						}).success(function(res) {
+							hideForms();
+							initialize();
+						}).fail(function(err) {
+							alert(err);
+						});
+					}
+				});
+				
+			});
+			
+		});
+		
 		
 		$('#need-form').on('click', 'button.submit', function() {
 			
