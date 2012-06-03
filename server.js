@@ -246,9 +246,14 @@ app.get('/api/sensis/:postcode/:business_name', function(req, res) {
 	};
 	
 	http.get(options, function(sensis_response) {
+		var dataStr = '';
+		
 		sensis_response.setEncoding('utf8');
 		sensis_response.on('data', function (chunk) {
-			var data = JSON.parse(chunk);
+			dataStr += chunk;
+		});
+		sensis_response.on('end', function () {
+			var data = JSON.parse(dataStr);
 			
 			res.send(data);
 		});
